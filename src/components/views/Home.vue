@@ -17,6 +17,17 @@
       >
         <span>🔄</span> Retornar un préstec
       </button>
+
+      <button
+        @click="$router.push('/ludoteca')"
+        class="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-4 px-6 rounded-xl transition-all transform active:scale-95 shadow-md flex items-center justify-center gap-2"
+      >
+        <span>📚</span> Consultar ludoteca
+      </button>
     </div>
   </div>
 </template>
+
+<script setup>
+
+</script>

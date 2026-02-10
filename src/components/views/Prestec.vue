@@ -1,17 +1,14 @@
 <template>
   <div class="w-full max-w-lg mx-auto bg-white min-h-screen md:min-h-0 md:rounded-2xl md:shadow-xl p-6 flex flex-col relative">
 
+    <LoadingSpinner
+      v-if="carregant"
+      :text="textCarrega"
+    />
+
     <div class="flex items-center mb-6">
-      <button
-        @click="$router.push('/')"
-        class="text-gray-500 hover:text-blue-600 transition-colors flex items-center gap-2"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
-        </svg>
-        Tornar
-      </button>
-      <h2 class="ml-auto text-xl font-bold text-gray-800">Nou Préstec</h2>
+      <BackButton />
+      <h2 class="ml-auto text-xl font-bold text-gray-800">Nou préstec</h2>
     </div>
 
     <div class="mb-6">
@@ -20,7 +17,7 @@
         v-model="nomSoci"
         type="text"
         placeholder="Qui s'emporta els jocs?"
-        class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+        class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
       >
     </div>
 
@@ -42,20 +39,20 @@
         v-if="textCerca.length > 0 && resultatsFiltrats.length > 0"
         class="absolute z-10 left-0 right-0 mt-1 bg-white rounded-lg shadow-xl border border-gray-100 max-h-60 overflow-y-auto"
       >
-        <ul>
-          <li
+        <div class="flex flex-col">
+          <JocItem
             v-for="joc in resultatsFiltrats"
             :key="joc.id"
-            @click="afegirJoc(joc)"
-            class="px-4 py-3 hover:bg-blue-50 cursor-pointer border-b border-gray-100 last:border-0 flex justify-between items-center"
+            :joc="joc"
+            @click="joc.esPotPrestar ? afegirJoc(joc) : null"
+            class="px-4 py-3 border-b border-gray-100 last:border-0"
+            :class="joc.esPotPrestar ? 'hover:bg-blue-50 cursor-pointer' : 'cursor-not-allowed'"
           >
-            <div>
-              <p class="font-semibold text-gray-800">{{ joc.nom }}</p>
-              <p class="text-xs text-gray-500">Codi: {{ joc.id }}</p>
-            </div>
-            <span class="text-blue-600 text-sm font-medium">+ Afegir</span>
-          </li>
-        </ul>
+            <template #action>
+              <span class="text-blue-600 text-sm font-medium whitespace-nowrap">+ Afegir</span>
+            </template>
+          </JocItem>
+        </div>
       </div>
 
       <div v-if="textCerca.length > 0 && resultatsFiltrats.length === 0" class="absolute z-10 left-0 right-0 mt-1 bg-white p-4 rounded-lg shadow-xl border border-gray-100 text-center text-gray-500">
@@ -72,36 +69,32 @@
         <p class="text-gray-400">Encara no has afegit cap joc</p>
       </div>
 
-      <ul v-else class="space-y-3">
-        <li
+      <div v-else class="space-y-3">
+        <JocItem
           v-for="(joc, index) in jocsSeleccionats"
           :key="index"
-          class="bg-blue-50 p-4 rounded-lg flex justify-between items-center group"
+          :joc="joc"
+          class="bg-blue-50 p-4 rounded-lg"
         >
-          <div class="flex items-center gap-3">
-            <div class="bg-blue-100 text-blue-600 font-bold px-2 py-1 rounded text-xs">
-              {{ joc.id }}
-            </div>
-            <span class="font-medium text-gray-800">{{ joc.nom }}</span>
-          </div>
-
-          <button
-            @click="eliminarJoc(index)"
-            class="text-gray-400 hover:text-red-500 transition-colors p-1"
-            title="Treure de la llista"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </li>
-      </ul>
+          <template #action>
+            <button
+              @click.stop="eliminarJoc(index)"
+              class="text-gray-400 hover:text-red-500 transition-colors p-1"
+              title="Treure de la llista"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </template>
+        </JocItem>
+      </div>
     </div>
 
     <div class="mt-auto">
       <button
         @click="confirmarPrestec"
-        :disabled="!esValid"
+        :disabled="!esValid || carregant"
         class="w-full py-4 px-6 rounded-xl font-bold text-white shadow-lg transition-all transform active:scale-95 disabled:bg-gray-300 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none"
         :class="esValid ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-300'"
       >
@@ -113,9 +106,13 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import { getJocs, postPrestec } from '../services/api'
+import {computed, onMounted, ref} from 'vue'
+import {useRouter} from 'vue-router'
+import {getJocs, postPrestec} from '../../services/api.js'
+import {netejarText} from '../../js/utils.js'
+import JocItem from '../lists/JocItem.vue'
+import BackButton from "../ui/BackButton.vue";
+import LoadingSpinner from '../ui/LoadingSpinner.vue'
 
 const router = useRouter()
 
@@ -129,7 +126,7 @@ const textCarrega = ref('')
 
 onMounted(async () => {
   carregant.value = true
-  textCarrega.value = 'Carregant catàleg...'
+  textCarrega.value = 'Carregant...'
   try {
     jocsDisponibles.value = await getJocs()
   } catch (error) {
@@ -138,15 +135,6 @@ onMounted(async () => {
     carregant.value = false
   }
 })
-
-const netejarText = (text) => {
-  return text
-    .normalize("NFD")                     // Separa l'accent de la lletra
-    .replace(/[\u0300-\u036f]/g, "")      // Esborra els accents
-    .replace(/[.,:;!?¡¿'"-]/g, "")        // Esborra signes de puntuació
-    .toLowerCase()
-    .trim()
-}
 
 // -- LÒGICA DEL CERCADOR --
 const resultatsFiltrats = computed(() => {
@@ -179,7 +167,7 @@ const eliminarJoc = (index) => {
 
 const confirmarPrestec = async () => {
   carregant.value = true
-  textCarrega.value = 'Guardant préstec...'
+  textCarrega.value = 'Guardant...'
 
   try {
     const llistaIds = jocsSeleccionats.value.map(joc => joc.id)
