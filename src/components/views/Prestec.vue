@@ -3,7 +3,6 @@
 
     <LoadingSpinner
       v-if="carregant"
-      :text="textCarrega"
     />
 
     <div class="flex items-center mb-6">
@@ -80,14 +79,17 @@
     </div>
 
     <div class="mt-auto">
-      <button
-        @click="confirmarPrestec"
-        :disabled="!esValid || carregant"
-        class="w-full py-4 px-6 rounded-xl font-bold text-white shadow-lg transition-all transform active:scale-95 disabled:bg-gray-300 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none"
-        :class="esValid ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-300'"
-      >
-        Confirmar préstec
-      </button>
+      <ActionModalButton
+        button-label="Confirmar préstec"
+        :disabled="!esValid"
+        :action="guardarPrestec"
+
+        confirm-title="Confirmar préstec?"
+        :confirm-message="`Estàs a punt de prestar ${jocsSeleccionats.length} jocs a ${nomSoci}. És correcte?`"
+        success-message="Préstec guardat correctament"
+        error-message="No s'ha pogut guardar el préstec"
+        @success="onActionModelReturn"
+      />
     </div>
 
   </div>
@@ -101,6 +103,7 @@ import {netejarText} from '../../js/utils.js'
 import JocItem from '../lists/JocItem.vue'
 import BackButton from "../ui/BackButton.vue";
 import LoadingSpinner from '../ui/LoadingSpinner.vue'
+import ActionModalButton from "../ui/ActionModalButton.vue";
 import SearchInput from '../ui/SearchInput.vue'
 
 const router = useRouter()
@@ -110,16 +113,14 @@ const jocsDisponibles = ref([])
 const jocsSeleccionats = ref([])
 const nomSoci = ref('')
 const textCerca = ref('')
-const carregant = ref(false)
-const textCarrega = ref('')
+const carregant = ref('')
 
 onMounted(async () => {
   carregant.value = true
-  textCarrega.value = 'Carregant...'
   try {
     jocsDisponibles.value = await getJocs()
   } catch (error) {
-    alert("No s'ha pogut connectar amb la ludoteca")
+    console.error(error)
   } finally {
     carregant.value = false
   }
@@ -151,23 +152,16 @@ const eliminarJoc = (index) => {
   jocsSeleccionats.value.splice(index, 1)
 }
 
-const confirmarPrestec = async () => {
-  carregant.value = true
-  textCarrega.value = 'Guardant...'
+const guardarPrestec = async () => {
+  const llistaIds = jocsSeleccionats.value.map(joc => joc.id)
+  return await postPrestec(nomSoci.value, llistaIds)
+}
 
-  try {
-    const llistaIds = jocsSeleccionats.value.map(joc => joc.id)
-    await postPrestec(nomSoci.value, llistaIds)
-
-    alert("Préstec guardat correctament!")
-    nomSoci.value = ''
-    jocsSeleccionats.value = []
-    router.push('/')
-  } catch (error) {
-    alert("Hi ha hagut un error al guardar")
-  } finally {
-    carregant.value = false
-  }
+const onActionModelReturn = () => {
+  // Netejar i redirigir
+  nomSoci.value = ''
+  jocsSeleccionats.value = []
+  router.push('/')
 }
 
 // -- VALIDACIÓ --

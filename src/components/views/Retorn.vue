@@ -84,15 +84,17 @@
         </JocItem>
       </div>
 
-      <div class="mt-auto pt-4 border-t border-gray-100">
-        <button
-          @click="confirmarRetorn"
-          :disabled="seleccioIds.length === 0"
-          class="w-full py-4 px-6 rounded-xl font-bold text-white shadow-lg transition-all transform active:scale-95 disabled:bg-gray-300 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none"
-          :class="seleccioIds.length > 0 ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-300'"
-        >
-          Confirmar retorn ({{ seleccioIds.length }})
-        </button>
+      <div class="mt-auto">
+        <ActionModalButton
+          button-label="Confirmar retorn"
+          :disabled="!esValid"
+          :action="confirmarRetorn"
+          confirm-title="Confirmar retorn?"
+          :confirm-message="`Estàs a punt de retornar ${seleccioIds.length} jocs`"
+          success-message="Préstec retornat correctament"
+          error-message="No s'ha pogut retornar el préstec"
+          @success="onActionModelReturn"
+        />
       </div>
 
     </div>
@@ -107,6 +109,7 @@ import BackButton from '../ui/BackButton.vue'
 import LoadingSpinner from '../ui/LoadingSpinner.vue'
 import JocItem from '../lists/JocItem.vue'
 import SearchInput from '../ui/SearchInput.vue'
+import ActionModalButton from '../ui/ActionModalButton.vue'
 import {actualitarPrestec, getPrestecsActius} from '../../services/api.js'
 import {netejarText} from '../../js/utils.js'
 
@@ -187,19 +190,20 @@ const toggleSeleccionarTot = () => {
 }
 
 const confirmarRetorn = async () => {
-  if (!confirm(`Confirmar el retorn de ${seleccioIds.value.length} jocs?`)) return
-
-  carregant.value = true
-  try {
-    await actualitarPrestec(seleccioIds.value)
-    alert('Retorn realitzat correctament!')
-    router.push('/')
-  } catch (e) {
-    alert('Error: ' + e.message)
-  } finally {
-    carregant.value = false
-  }
+  return await actualitarPrestec(seleccioIds.value)
 }
+
+const onActionModelReturn = () => {
+  // Netejar i redirigir
+  sociSeleccionat.value = null
+  seleccioIds.value = []
+  router.push('/')
+}
+
+// -- VALIDACIÓ --
+const esValid = computed(() => {
+  return seleccioIds.value.length > 0
+})
 </script>
 
 <style scoped>

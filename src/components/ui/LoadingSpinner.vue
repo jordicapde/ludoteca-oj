@@ -7,7 +7,7 @@
 
     <p
       v-if="text"
-      class="mt-4 font-semibold text-sm tracking-wide animate-pulse"
+      class="mt-4 font-semibold text-sm tracking-wide"
       :class="textColor"
     >
       {{ text }}
