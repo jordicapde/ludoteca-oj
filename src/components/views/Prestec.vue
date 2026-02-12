@@ -8,7 +8,7 @@
 
     <div class="flex items-center mb-6">
       <BackButton />
-      <h2 class="ml-auto text-xl font-bold text-gray-800">Nou préstec</h2>
+      <h2 class="ml-auto text-xl font-bold text-gray-800">Fer un préstec</h2>
     </div>
 
     <div class="mb-6">
@@ -17,49 +17,37 @@
         v-model="nomSoci"
         type="text"
         placeholder="Qui s'emporta els jocs?"
-        class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+        class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 outline-none transition-all"
       >
     </div>
 
-    <div class="mb-6 relative">
-      <label class="block text-sm font-medium text-gray-700 mb-1">Afegeix jocs al préstec</label>
-      <div class="relative">
-        <input
-          v-model="textCerca"
-          type="text"
-          placeholder="Cerca per nom o codi..."
-          class="w-full px-4 py-3 pl-10 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none"
+    <!-- Quadre de cerca -->
+    <SearchInput
+      v-model="textCerca"
+      label="Afegeix jocs al préstec"
+      placeholder="Busca per nom o codi..."
+      theme="primary"
+      :results="resultatsFiltrats"
+    >
+      <template #item="{ item }">
+        <JocItem
+          :joc="item"
+          @click="item.esPotPrestar ? afegirJoc(item) : null"
+          class="px-4 py-3"
+          :class="!item.esPotPrestar ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'"
         >
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400 absolute left-3 top-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-        </svg>
-      </div>
+          <template #action>
+            <span class="text-blue-600 text-sm font-medium whitespace-nowrap">+ Afegir</span>
+          </template>
+        </JocItem>
+      </template>
 
-      <div
-        v-if="textCerca.length > 0 && resultatsFiltrats.length > 0"
-        class="absolute z-10 left-0 right-0 mt-1 bg-white rounded-lg shadow-xl border border-gray-100 max-h-60 overflow-y-auto"
-      >
-        <div class="flex flex-col">
-          <JocItem
-            v-for="joc in resultatsFiltrats"
-            :key="joc.id"
-            :joc="joc"
-            @click="joc.esPotPrestar ? afegirJoc(joc) : null"
-            class="px-4 py-3 border-b border-gray-100 last:border-0"
-            :class="joc.esPotPrestar ? 'hover:bg-blue-50 cursor-pointer' : 'cursor-not-allowed'"
-          >
-            <template #action>
-              <span class="text-blue-600 text-sm font-medium whitespace-nowrap">+ Afegir</span>
-            </template>
-          </JocItem>
-        </div>
-      </div>
-
-      <div v-if="textCerca.length > 0 && resultatsFiltrats.length === 0" class="absolute z-10 left-0 right-0 mt-1 bg-white p-4 rounded-lg shadow-xl border border-gray-100 text-center text-gray-500">
+      <template #no-results>
         No s'ha trobat cap joc
-      </div>
-    </div>
+      </template>
+    </SearchInput>
 
+    <!-- Llista jocs seleccionats -->
     <div class="flex-1 overflow-y-auto mb-6">
       <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3">
         Jocs seleccionats ({{ jocsSeleccionats.length }})
@@ -113,6 +101,7 @@ import {netejarText} from '../../js/utils.js'
 import JocItem from '../lists/JocItem.vue'
 import BackButton from "../ui/BackButton.vue";
 import LoadingSpinner from '../ui/LoadingSpinner.vue'
+import SearchInput from '../ui/SearchInput.vue'
 
 const router = useRouter()
 
@@ -140,18 +129,15 @@ onMounted(async () => {
 const resultatsFiltrats = computed(() => {
   if (!textCerca.value) return []
 
-  const textUsuari = netejarText(textCerca.value)
+  const textCercaNet = netejarText(textCerca.value)
 
   return jocsDisponibles.value.filter(joc => {
-    // 1. Evitem mostrar jocs que ja tenim a la cistella
+    // Evitem mostrar jocs que ja tenim a la cistella
     const jaSeleccionat = jocsSeleccionats.value.some(s => s.id === joc.id)
     if (jaSeleccionat) return false
 
-    // 2. Netegem el nom del joc de la base de dades
-    const nomJocNet = netejarText(joc.nom)
-
-    // 3. Comprovem si coincideix
-    return nomJocNet.includes(textUsuari) || String(joc.id).includes(textUsuari)
+    return netejarText(joc.nom).includes(textCercaNet) ||
+        netejarText(joc.id).includes(textCercaNet)
   })
 })
 

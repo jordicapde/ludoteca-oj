@@ -25,17 +25,18 @@ const props = defineProps({
   },
   color: {
     type: String,
-    default: 'blue', // 'green', 'blue', 'purple', 'red'
-    validator: (value) => ['green', 'blue', 'purple', 'red', 'gray'].includes(value)
+    default: 'primary',
+    validator: (v) => ['primary', 'secondary', 'accent', 'green', 'red'].includes(v)
   }
 })
 
 const colorsMap = {
-  green:  { border: 'border-t-green-600',  text: 'text-green-600' },
-  blue:   { border: 'border-t-blue-600',   text: 'text-blue-600' },
-  purple: { border: 'border-t-purple-600', text: 'text-purple-600' },
-  red:    { border: 'border-t-red-600',    text: 'text-red-600' },
-  gray:   { border: 'border-t-gray-600',   text: 'text-gray-600' }
+  primary:   { border: 'border-t-primary-600',  text: 'text-primary-600' },
+  secondary: { border: 'border-t-secondary-500', text: 'text-secondary-600' },
+  accent:    { border: 'border-t-accent-500',   text: 'text-accent-600' },
+  // Colors d'estat de Tailwind per defecte
+  green:     { border: 'border-t-emerald-500',  text: 'text-emerald-600' },
+  red:       { border: 'border-t-red-500',      text: 'text-red-600' }
 }
 
 const borderColor = computed(() => colorsMap[props.color]?.border)

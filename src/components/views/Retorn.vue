@@ -7,55 +7,48 @@
 
     <div class="flex items-center mb-6">
       <BackButton />
-      <h2 class="ml-auto text-xl font-bold text-gray-800">Retornar jocs</h2>
+      <h2 class="ml-auto text-xl font-bold text-gray-800">Retornar un préstec</h2>
     </div>
 
-    <div class="relative mb-6 z-20">
-      <label class="block text-sm font-medium text-gray-700 mb-1">Buscar soci</label>
-      <div class="relative">
-        <input
-          v-model="textCerca"
-          @input="alEscriure"
-          type="text"
-          placeholder="Escriu el nom per buscar..."
-          class="w-full px-4 py-3 pl-10 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 outline-none transition-all shadow-sm"
-          autocomplete="off"
+    <!-- Quadre de cerca -->
+    <SearchInput
+      v-model="nomSoci"
+      @update:model-value="alEscriure"
+      label="Nom i cognoms"
+      placeholder="Amb quin nom vas registrar el préstec?"
+      theme="primary"
+      :results="mostrarSuggeriments ? resultatsCerca : []"
+    >
+      <template #item="{ item }">
+        <button
+          @click="seleccionarSoci(item.nom)"
+          class="w-full text-left px-4 py-3 flex justify-between items-center group"
         >
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400 absolute left-3 top-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-        </svg>
+          <span class="font-medium text-gray-700 group-hover:text-primary-700">
+            {{ item.nom }}
+          </span>
+          <span class="text-xs bg-gray-100 text-gray-500 px-2 py-1 rounded-full">
+            {{ item.total }} jocs
+          </span>
+        </button>
+      </template>
 
-        <div
-          v-if="textCerca && resultatsCerca.length > 0 && mostrarSuggeriments"
-          class="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-xl max-h-60 overflow-y-auto z-30"
-        >
-          <button
-            v-for="soci in resultatsCerca"
-            :key="soci.nom"
-            @click="seleccionarSoci(soci.nom)"
-            class="w-full text-left px-4 py-3 hover:bg-green-50 border-b border-gray-50 last:border-0 flex justify-between items-center group transition-colors"
-          >
-            <span class="font-medium text-gray-700 group-hover:text-green-700">{{ soci.nom }}</span>
-            <span class="text-xs bg-gray-100 text-gray-500 px-2 py-1 rounded-full">{{ soci.total }} jocs</span>
-          </button>
-        </div>
+      <template #no-results>
+        No s'ha trobat cap préstec amb aquest nom
+      </template>
+    </SearchInput>
 
-        <div v-if="textCerca && resultatsCerca.length === 0 && mostrarSuggeriments" class="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg p-4 text-center text-gray-500 z-30">
-          No s'ha trobat cap préstec amb aquest nom
-        </div>
-      </div>
-    </div>
-
+    <!-- Llista resultats préstec -->
     <div v-if="sociSeleccionat" class="flex-1 flex flex-col animate-fade-in-up">
 
       <div class="flex items-center justify-between mb-4 pb-2 border-b border-gray-100">
         <div>
-          <h3 class="text-lg font-bold text-gray-800">Jocs de <span class="text-green-600">{{ sociSeleccionat }}</span></h3>
+          <h3 class="text-lg font-bold text-gray-800">Jocs en préstec: <span class="text-primary-600">{{ sociSeleccionat }}</span></h3>
           <p class="text-xs text-gray-500">Selecciona els jocs que retornes</p>
         </div>
         <button
           @click="toggleSeleccionarTot"
-          class="text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors"
+          class="text-sm font-medium text-primary-600 hover:text-primary-800 transition-colors"
         >
           {{ totsSeleccionats ? 'Deseleccionar tot' : 'Seleccionar tot' }}
         </button>
@@ -104,13 +97,6 @@
 
     </div>
 
-    <div v-else-if="!textCerca" class="flex-1 flex flex-col items-center justify-center text-gray-400 opacity-50">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-      </svg>
-      <p>Busca un soci per veure els seus préstecs</p>
-    </div>
-
   </div>
 </template>
 
@@ -120,6 +106,7 @@ import {useRouter} from 'vue-router'
 import BackButton from '../ui/BackButton.vue'
 import LoadingSpinner from '../ui/LoadingSpinner.vue'
 import JocItem from '../lists/JocItem.vue'
+import SearchInput from '../ui/SearchInput.vue'
 import {actualitarPrestec, getPrestecsActius} from '../../services/api.js'
 import {netejarText} from '../../js/utils.js'
 
@@ -129,7 +116,7 @@ const router = useRouter()
 const carregant = ref(false)
 const prestecsActius = ref([])
 const sociSeleccionat = ref(null)
-const textCerca = ref('')
+const nomSoci = ref('')
 const seleccioIds = ref([])
 const mostrarSuggeriments = ref(false) // Controla si es veu el dropdown
 
@@ -165,16 +152,17 @@ const socisUnics = computed(() => {
 })
 
 const resultatsCerca = computed(() => {
-  if (!textCerca.value) return []
-  const cerca = netejarText(textCerca.value)
+  if (!nomSoci.value) return []
+  const cerca = netejarText(nomSoci.value)
   return socisUnics.value.filter(s => netejarText(s.nom).includes(cerca))
 })
 
 const seleccionarSoci = (nom) => {
+  // Reset d'estat i interfície
   sociSeleccionat.value = nom
-  textCerca.value = '' // Netegem el text per deixar-ho maco
-  mostrarSuggeriments.value = false // Amaguem el dropdown
-  seleccioIds.value = [] // Reset de selecció anterior
+  nomSoci.value = ''
+  mostrarSuggeriments.value = false
+  seleccioIds.value = []
 }
 
 const prestecsDelSoci = computed(() => {

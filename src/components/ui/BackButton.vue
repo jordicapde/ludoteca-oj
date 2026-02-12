@@ -1,7 +1,7 @@
 <template>
   <button
     @click="anarEnrere"
-    class="text-gray-500 hover:text-blue-600 transition-colors flex items-center gap-2 group"
+    class="text-gray-500 hover:text-primary-600 transition-colors flex items-center gap-2 group"
   >
     <div class="p-1 rounded-full group-hover:bg-blue-50 transition-colors">
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
