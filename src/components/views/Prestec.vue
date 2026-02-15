@@ -47,10 +47,10 @@
     </SearchInput>
 
     <!-- Llista jocs seleccionats -->
+    <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3">
+      Jocs seleccionats ({{ jocsSeleccionats.length }})
+    </h3>
     <div class="flex-1 overflow-y-auto mb-6">
-      <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3">
-        Jocs seleccionats ({{ jocsSeleccionats.length }})
-      </h3>
 
       <div v-if="jocsSeleccionats.length === 0" class="text-center py-8 bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
         <p class="text-gray-400">Encara no has afegit cap joc</p>
@@ -85,7 +85,7 @@
         :action="guardarPrestec"
 
         confirm-title="Confirmar préstec?"
-        :confirm-message="`Estàs a punt de prestar ${jocsSeleccionats.length} jocs a ${nomSoci}. És correcte?`"
+        :confirm-message="`Estàs a punt d'agafar ${jocsSeleccionats.length} ${jocsSeleccionats.length === 1 ? 'joc' : 'jocs'}`"
         success-message="Préstec guardat correctament"
         error-message="No s'ha pogut guardar el préstec"
         @success="onActionModelReturn"

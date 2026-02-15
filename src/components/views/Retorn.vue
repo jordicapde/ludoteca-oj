@@ -39,22 +39,34 @@
     </SearchInput>
 
     <!-- Llista resultats préstec -->
-    <div v-if="sociSeleccionat" class="flex-1 flex flex-col animate-fade-in-up">
+    <div v-if="sociSeleccionat" class="flex-1 flex flex-col animate-fade-in-up overflow-hidden">
 
-      <div class="flex items-center justify-between mb-4 pb-2 border-b border-gray-100">
-        <div>
-          <h3 class="text-lg font-bold text-gray-800">Jocs en préstec: <span class="text-primary-600">{{ sociSeleccionat }}</span></h3>
-          <p class="text-xs text-gray-500">Selecciona els jocs que retornes</p>
+      <div class="flex-none">
+        <h3 class="text-lg font-bold text-gray-800 mb-4">
+          Jocs en préstec: <span class="text-primary-600">{{ sociSeleccionat }}</span>
+        </h3>
+
+        <p class="block text-sm font-medium text-gray-700 mb-2">
+          Selecciona els jocs que retornes
+        </p>
+
+        <div class="flex items-center justify-between border-b border-gray-200 pb-2">
+
+          <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider">
+            Jocs seleccionats ({{ seleccioIds.length }})
+          </h3>
+
+          <button
+            @click="toggleSeleccionarTot"
+            class="text-sm font-medium text-primary-600 hover:text-primary-800 transition-colors"
+          >
+            {{ totsSeleccionats ? 'Deseleccionar tot' : 'Seleccionar tot' }}
+          </button>
+
         </div>
-        <button
-          @click="toggleSeleccionarTot"
-          class="text-sm font-medium text-primary-600 hover:text-primary-800 transition-colors"
-        >
-          {{ totsSeleccionats ? 'Deseleccionar tot' : 'Seleccionar tot' }}
-        </button>
       </div>
 
-      <div class="flex-1 overflow-y-auto space-y-3 -mx-2 px-2 pb-4">
+      <div class="flex-1 overflow-y-auto space-y-3 -mx-2 px-2 pb-4 pt-4 min-h-0">
         <JocItem
           v-for="prestec in prestecsDelSoci"
           :key="prestec.idPrestec"
@@ -84,13 +96,14 @@
         </JocItem>
       </div>
 
-      <div class="mt-auto">
+      <div class="mt-auto flex-none">
         <ActionModalButton
           button-label="Confirmar retorn"
           :disabled="!esValid"
           :action="confirmarRetorn"
+
           confirm-title="Confirmar retorn?"
-          :confirm-message="`Estàs a punt de retornar ${seleccioIds.length} jocs`"
+          :confirm-message="`Estàs a punt de retornar ${seleccioIds.length} ${seleccioIds.length === 1 ? 'joc' : 'jocs'}`"
           success-message="Préstec retornat correctament"
           error-message="No s'ha pogut retornar el préstec"
           @success="onActionModelReturn"
@@ -181,7 +194,7 @@ const toggleSeleccio = (id) => {
 }
 
 const totsSeleccionats = computed(() => {
-  return prestecsDelSoci.value.length > 0 && prestecsDelSoci.value.every(p => seleccioIds.value.includes(p.idPrestec))
+  return prestecsDelSoci.value.length > 0 && seleccioIds.value.length === prestecsDelSoci.value.length
 })
 
 const toggleSeleccionarTot = () => {

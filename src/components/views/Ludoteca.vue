@@ -39,7 +39,7 @@
     </div>
 
     <div class="mt-4 pt-4 border-t border-gray-100 text-center text-xs text-gray-400">
-      Mostrant {{ jocsFiltrats.length }} jocs de {{ jocs.length }}
+      Mostrant {{ jocsFiltrats.length }} {{jocsFiltrats.length === 1 ? 'joc' : 'jocs'}} de {{ jocs.length }}
     </div>
 
   </div>
