@@ -1,10 +1,11 @@
 export class Joc {
-  constructor({ id, nom, estat }) {
-    this.id = String(id || '');
+  constructor({ id, codi, nom, estat }) {
+    this.id = id;
+    this.codi = String(codi || '');
     this.nom = String(nom || 'Sense nom');
 
-    const estatsValids = Object.values(ESTAT_JOC);
-    this.estat = estatsValids.includes(estat) ? estat : ESTAT_JOC.DISPONIBLE;
+    const estatsValids = Object.keys(ESTAT_JOC);
+    this.estat = estatsValids.includes(estat) ? ESTAT_JOC[estat] : ESTAT_JOC.DISPONIBLE;
   }
 
   get esPotPrestar() {
@@ -14,7 +15,7 @@ export class Joc {
 
 export const ESTAT_JOC = Object.freeze({
   DISPONIBLE: 'Disponible',
-  PRESTAT: 'En préstec',
+  PRESTEC: 'En préstec',
 });
 
 export const crearJoc = (dades) => new Joc(dades);

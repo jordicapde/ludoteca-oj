@@ -1,5 +1,5 @@
 import { crearJoc } from '../models/Joc.js';
-import {crearPrestec} from "../models/Prestec.js";
+import { crearDetallEstat } from "../models/DetallEstat.js";
 
 const API_URL = 'https://script.google.com/macros/s/AKfycbyA0pDGfmI7G_5KkZYE2Fp0c-O11KnFGyouNspe_nGH1dt5aysx5Vh3zqjzfgz_-tPm/exec'
 
@@ -19,13 +19,13 @@ export const getJocs = async () => {
   }
 };
 
-export const getPrestecsActius = async () => {
+export const getEstats = async () => {
   try {
-    const response = await fetch(`${API_URL}?action=getPrestecsActius`);
+    const response = await fetch(`${API_URL}?action=getEstats`);
     const json = await response.json();
 
     if (json.status === "success") {
-      return json.data.map(item => crearPrestec(item));
+      return json.data.map(item => crearDetallEstat(item));
     } else {
       throw new Error(json.message || "Error desconegut");
     }
@@ -38,8 +38,8 @@ export const getPrestecsActius = async () => {
 export const postPrestec = async (nomSoci, idsJocs) => {
   const request = {
     action: 'postPrestec',
-    nom: nomSoci,
-    jocs: idsJocs
+    nomSoci: nomSoci,
+    idsJocs: idsJocs
   };
 
   try {

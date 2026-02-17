@@ -77,7 +77,7 @@ const jocsFiltrats = computed(() => {
   const textCercaNet = netejarText(textCerca.value)
   return jocs.value.filter(joc => {
     return netejarText(joc.nom).includes(textCercaNet) ||
-        netejarText(joc.id).includes(textCercaNet)
+        netejarText(joc.codi).includes(textCercaNet)
   })
 })
 </script>

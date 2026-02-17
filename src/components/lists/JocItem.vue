@@ -8,7 +8,7 @@
         class="font-bold px-2 py-1 rounded text-xs shrink-0"
         :class="joc.esPotPrestar ? 'bg-blue-100 text-blue-600' : 'bg-gray-200 text-gray-500'"
       >
-        {{ joc.id }}
+        {{ joc.codi }}
       </div>
 
       <div class="truncate">

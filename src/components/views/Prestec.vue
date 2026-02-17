@@ -138,7 +138,7 @@ const resultatsFiltrats = computed(() => {
     if (jaSeleccionat) return false
 
     return netejarText(joc.nom).includes(textCercaNet) ||
-        netejarText(joc.id).includes(textCercaNet)
+        netejarText(joc.codi).includes(textCercaNet)
   })
 })
 

@@ -70,7 +70,7 @@
         <JocItem
           v-for="prestec in prestecsDelSoci"
           :key="prestec.idPrestec"
-          :joc="{ id: prestec.idJoc, nom: prestec.nomJoc }"
+          :joc="{ id: prestec.idJoc }"
           @click="toggleSeleccio(prestec.idPrestec)"
           class="cursor-pointer border transition-all duration-200"
           :class="estaSeleccionat(prestec.idPrestec) ? 'border-green-500 bg-green-50 shadow-sm' : 'border-gray-100 hover:bg-gray-50'"
@@ -123,7 +123,7 @@ import LoadingSpinner from '../ui/LoadingSpinner.vue'
 import JocItem from '../lists/JocItem.vue'
 import SearchInput from '../ui/SearchInput.vue'
 import ActionModalButton from '../ui/ActionModalButton.vue'
-import {actualitarPrestec, getPrestecsActius} from '../../services/api.js'
+import {actualitarPrestec, getEstats} from '../../services/api.js'
 import {netejarText} from '../../js/utils.js'
 
 const router = useRouter()
@@ -139,7 +139,7 @@ const mostrarSuggeriments = ref(false) // Controla si es veu el dropdown
 onMounted(async () => {
   carregant.value = true
   try {
-    prestecsActius.value = await getPrestecsActius()
+    prestecsActius.value = await getEstats()
   } catch (error) {
     console.error(error)
   } finally {
