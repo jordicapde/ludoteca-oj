@@ -1,16 +1,16 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 
-import Home from './components/views/Home.vue'
-import Prestec from './components/views/Prestec.vue'
-import Retorn from './components/views/Retorn.vue'
-import Ludoteca from './components/views/Ludoteca.vue'
+import HomeView from './components/views/HomeView.vue'
+import PrestecView from './components/views/PrestecView.vue'
+import RetornView from './components/views/RetornView.vue'
+import LudotecaView from './components/views/LudotecaView.vue'
 
 // Definició de rutes
 const routes = [
-  { path: '/', component: Home },
-  { path: '/prestec', component: Prestec },
-  { path: '/retorn', component: Retorn },
-  { path: '/ludoteca', name: 'consulta', component: Ludoteca },
+  { path: '/', component: HomeView },
+  { path: '/prestec', component: PrestecView },
+  { path: '/retorn', component: RetornView },
+  { path: '/ludoteca', name: 'consulta', component: LudotecaView },
 ]
 
 const router = createRouter({
