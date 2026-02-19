@@ -31,11 +31,12 @@
       <template #item="{ item }">
         <JocItem
           :joc="item"
+          :mostrar-estat="!item.esPotPrestar"
           @click="item.esPotPrestar ? afegirJoc(item) : null"
-          class="px-4 py-3"
           :class="!item.esPotPrestar ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'"
+          :flat="true"
         >
-          <template #action>
+          <template #action v-if="item.esPotPrestar">
             <span class="text-blue-600 text-sm font-medium whitespace-nowrap">+ Afegir</span>
           </template>
         </JocItem>
@@ -61,7 +62,6 @@
           v-for="(joc, index) in jocsSeleccionats"
           :key="index"
           :joc="joc"
-          class="bg-blue-50 p-4 rounded-lg"
         >
           <template #action>
             <button

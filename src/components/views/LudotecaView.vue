@@ -27,14 +27,9 @@
           v-for="joc in jocsFiltrats"
           :key="joc.id"
           :joc="joc"
-          class="border border-gray-100 rounded-xl"
-        >
-          <template #action>
-            <span class="px-2 py-1 bg-green-100 text-green-700 text-xs font-bold rounded uppercase tracking-wide">
-              Disponible
-            </span>
-          </template>
-        </JocItem>
+          :mostrar-estat="true"
+          :hover="false"
+        />
       </div>
     </div>
 

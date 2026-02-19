@@ -27,7 +27,7 @@
           <span class="font-medium text-gray-700 group-hover:text-primary-700">
             {{ item.nom }}
           </span>
-          <span class="text-xs bg-gray-100 text-gray-500 px-2 py-1 rounded-full">
+          <span class="text-xs bg-primary-500 text-white px-2 py-1 rounded-full">
             {{ item.total }} jocs
           </span>
         </button>
@@ -66,17 +66,17 @@
         </div>
       </div>
 
-      <div class="flex-1 overflow-y-auto space-y-3 -mx-2 px-2 pb-4 pt-4 min-h-0">
+      <div class="flex-1 overflow-y-auto space-y-3 -mx-2 px-3 pb-4 pt-4 min-h-0">
         <JocItem
           v-for="prestec in prestecsDelSoci"
           :key="prestec.detall.idPrestec"
           :joc="prestec"
+          class="cursor-pointer"
           @click="toggleSeleccio(prestec.detall.idPrestec)"
-          class="cursor-pointer border transition-all duration-200"
-          :class="estaSeleccionat(prestec.detall.idPrestec) ? 'border-green-500 bg-green-50 shadow-sm' : 'border-gray-100 hover:bg-gray-50'"
+          :seleccionat="estaSeleccionat(prestec.detall.idPrestec)"
         >
-          <template #subtitle>
-            <div class="text-xs text-gray-500 mt-1">
+          <template #details>
+            <div class="text-xs text-gray-500">
               <span :class="prestec.detall.diesDePrestec > 15 ? 'text-red-500 font-bold' : ''">
                 Fa {{ prestec.detall.diesDePrestec }} dies
               </span>

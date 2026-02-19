@@ -7,6 +7,7 @@ export class Joc {
     const estatsValids = Object.keys(ESTAT_JOC);
     this.estat = estatsValids.includes(estat) ? ESTAT_JOC[estat] : ESTAT_JOC.DISPONIBLE;
     this.detall = null;
+    this.metadata = null;
   }
 
   get esPotPrestar() {
