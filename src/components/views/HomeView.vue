@@ -28,14 +28,32 @@
         <span class="text-lg">Consultar ludoteca</span>
       </button>
     </div>
+
+    <div class="mt-10 pt-6 border-t border-gray-100 flex flex-col items-center justify-center">
+
+      <img
+        src="../../assets/logo.png"
+        alt="Logo Associació"
+        class="h-16 w-auto mb-3 mx-auto object-contain"
+      />
+
+      <p class="text-xs text-gray-400 font-medium tracking-wide text-opacity-80 mt-2">
+        Aquesta és una eina exclusiva per a socis i sòcies d'Osona Juga
+      </p>
+      <p class="text-s text-gray-400 font-medium tracking-wide text-opacity-80 mt-1">
+        Versió {{ appVersion }}
+      </p>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useJocsStore } from '../../stores/jocsStore.js'
+import packageInfo from '../../../package.json'
 
 const store = useJocsStore()
+const appVersion = ref(packageInfo.version)
 
 onMounted(() => {
   store.inicialitzarDades(true);
