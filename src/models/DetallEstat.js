@@ -15,6 +15,15 @@ export class DetallEstat {
         break;
     }
   }
+
+  get diesDePrestec() {
+    if (this.tipus !== ESTAT_JOC.PRESTEC || !this.dataInici)
+      return 0;
+
+    const now = new Date();
+    const diff = now - this.dataInici;
+    return Math.floor(diff / (1000 * 60 * 60 * 24));
+  }
 }
 
 export const crearDetallEstat = (dades) => new DetallEstat(dades);

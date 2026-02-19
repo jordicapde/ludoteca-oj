@@ -2,7 +2,7 @@
   <div class="w-full max-w-lg mx-auto bg-white min-h-screen md:min-h-0 md:rounded-2xl md:shadow-xl p-6 flex flex-col relative">
 
     <LoadingSpinner
-      v-if="carregant"
+      v-if="store.carregant"
     />
 
     <div class="flex items-center mb-6">
@@ -105,25 +105,18 @@ import BackButton from "../ui/BackButton.vue";
 import LoadingSpinner from '../ui/LoadingSpinner.vue'
 import ActionModalButton from "../ui/ActionModalButton.vue";
 import SearchInput from '../ui/SearchInput.vue'
+import { useJocsStore } from '../../stores/jocsStore.js'
 
 const router = useRouter()
+const store = useJocsStore()
 
 // -- ESTAT --
-const jocsDisponibles = ref([])
 const jocsSeleccionats = ref([])
 const nomSoci = ref('')
 const textCerca = ref('')
-const carregant = ref('')
 
 onMounted(async () => {
-  carregant.value = true
-  try {
-    jocsDisponibles.value = await getJocs()
-  } catch (error) {
-    console.error(error)
-  } finally {
-    carregant.value = false
-  }
+  await store.inicialitzarDades();
 })
 
 // -- LÒGICA DEL CERCADOR --
@@ -132,7 +125,7 @@ const resultatsFiltrats = computed(() => {
 
   const textCercaNet = netejarText(textCerca.value)
 
-  return jocsDisponibles.value.filter(joc => {
+  return store.ludoteca.filter(joc => {
     // Evitem mostrar jocs que ja tenim a la cistella
     const jaSeleccionat = jocsSeleccionats.value.some(s => s.id === joc.id)
     if (jaSeleccionat) return false

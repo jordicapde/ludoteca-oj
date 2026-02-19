@@ -6,10 +6,15 @@ export class Joc {
 
     const estatsValids = Object.keys(ESTAT_JOC);
     this.estat = estatsValids.includes(estat) ? ESTAT_JOC[estat] : ESTAT_JOC.DISPONIBLE;
+    this.detall = null;
   }
 
   get esPotPrestar() {
     return this.estat === ESTAT_JOC.DISPONIBLE;
+  }
+
+  get estaEnPrestec() {
+    return this.estat === ESTAT_JOC.PRESTEC;
   }
 }
 

@@ -24,7 +24,7 @@
         @click="$router.push('/ludoteca')"
         class="w-full bg-white hover:bg-gray-50 text-gray-700 font-semibold py-5 px-6 rounded-xl border border-gray-100 shadow-lg hover:shadow-xl transition-all transform active:scale-95 flex items-center justify-center gap-3"
       >
-        <span class="text-2xl">📚</span>
+        <span class="text-2xl">👀</span>
         <span class="text-lg">Consultar ludoteca</span>
       </button>
     </div>
@@ -32,5 +32,12 @@
 </template>
 
 <script setup>
+import { onMounted } from 'vue'
+import { useJocsStore } from '../../stores/jocsStore.js'
 
+const store = useJocsStore()
+
+onMounted(() => {
+  store.inicialitzarDades(true);
+})
 </script>

@@ -2,7 +2,7 @@
   <div class="w-full max-w-lg mx-auto bg-white min-h-screen md:min-h-0 md:rounded-2xl md:shadow-xl p-6 flex flex-col relative">
 
     <LoadingSpinner
-      v-if="carregant"
+      v-if="store.carregant"
     />
 
     <div class="flex items-center mb-6">
@@ -69,16 +69,16 @@
       <div class="flex-1 overflow-y-auto space-y-3 -mx-2 px-2 pb-4 pt-4 min-h-0">
         <JocItem
           v-for="prestec in prestecsDelSoci"
-          :key="prestec.idPrestec"
-          :joc="{ id: prestec.idJoc }"
-          @click="toggleSeleccio(prestec.idPrestec)"
+          :key="prestec.detall.idPrestec"
+          :joc="prestec"
+          @click="toggleSeleccio(prestec.detall.idPrestec)"
           class="cursor-pointer border transition-all duration-200"
-          :class="estaSeleccionat(prestec.idPrestec) ? 'border-green-500 bg-green-50 shadow-sm' : 'border-gray-100 hover:bg-gray-50'"
+          :class="estaSeleccionat(prestec.detall.idPrestec) ? 'border-green-500 bg-green-50 shadow-sm' : 'border-gray-100 hover:bg-gray-50'"
         >
           <template #subtitle>
             <div class="text-xs text-gray-500 mt-1">
-              <span :class="prestec.diesDePrestec > 15 ? 'text-red-500 font-bold' : ''">
-                Fa {{ prestec.diesDePrestec }} dies
+              <span :class="prestec.detall.diesDePrestec > 15 ? 'text-red-500 font-bold' : ''">
+                Fa {{ prestec.detall.diesDePrestec }} dies
               </span>
             </div>
           </template>
@@ -86,9 +86,9 @@
           <template #action>
             <div
               class="w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors"
-              :class="estaSeleccionat(prestec.idPrestec) ? 'bg-green-500 border-green-500' : 'border-gray-300 bg-white'"
+              :class="estaSeleccionat(prestec.detall.idPrestec) ? 'bg-green-500 border-green-500' : 'border-gray-300 bg-white'"
             >
-              <svg v-if="estaSeleccionat(prestec.idPrestec)" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" viewBox="0 0 20 20" fill="currentColor">
+              <svg v-if="estaSeleccionat(prestec.detall.idPrestec)" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
               </svg>
             </div>
@@ -123,28 +123,21 @@ import LoadingSpinner from '../ui/LoadingSpinner.vue'
 import JocItem from '../lists/JocItem.vue'
 import SearchInput from '../ui/SearchInput.vue'
 import ActionModalButton from '../ui/ActionModalButton.vue'
-import {actualitarPrestec, getEstats} from '../../services/api.js'
+import {actualitarPrestec} from '../../services/api.js'
 import {netejarText} from '../../js/utils.js'
+import { useJocsStore } from '../../stores/jocsStore.js'
 
+const store = useJocsStore()
 const router = useRouter()
 
 // Dades
-const carregant = ref(false)
-const prestecsActius = ref([])
 const sociSeleccionat = ref(null)
 const nomSoci = ref('')
 const seleccioIds = ref([])
 const mostrarSuggeriments = ref(false) // Controla si es veu el dropdown
 
 onMounted(async () => {
-  carregant.value = true
-  try {
-    prestecsActius.value = await getEstats()
-  } catch (error) {
-    console.error(error)
-  } finally {
-    carregant.value = false
-  }
+  await store.inicialitzarDades();
 })
 
 // Quan l'usuari escriu
@@ -158,13 +151,13 @@ const alEscriure = () => {
 }
 
 const socisUnics = computed(() => {
-  const mapa = {}
-  prestecsActius.value.forEach(p => {
-    const nom = p.nomSoci.trim()
-    if (!mapa[nom]) mapa[nom] = { nom: nom, total: 0 }
-    mapa[nom].total++
+  const nomsSocisPrestec = {}
+  store.prestecsActius.forEach(p => {
+    const nom = p.detall.nomSoci.trim()
+    if (!nomsSocisPrestec[nom]) nomsSocisPrestec[nom] = { nom: nom, total: 0 }
+    nomsSocisPrestec[nom].total++
   })
-  return Object.values(mapa)
+  return Object.values(nomsSocisPrestec)
 })
 
 const resultatsCerca = computed(() => {
@@ -183,7 +176,7 @@ const seleccionarSoci = (nom) => {
 
 const prestecsDelSoci = computed(() => {
   if (!sociSeleccionat.value) return []
-  return prestecsActius.value.filter(p => p.nomSoci.trim() === sociSeleccionat.value)
+  return store.prestecsActius.filter(p => p.detall.nomSoci.trim() === sociSeleccionat.value)
 })
 
 const estaSeleccionat = (id) => seleccioIds.value.includes(id)
@@ -199,7 +192,7 @@ const totsSeleccionats = computed(() => {
 
 const toggleSeleccionarTot = () => {
   if (totsSeleccionats.value) seleccioIds.value = []
-  else seleccioIds.value = prestecsDelSoci.value.map(p => p.idPrestec)
+  else seleccioIds.value = prestecsDelSoci.value.map(p => p.detall.idPrestec)
 }
 
 const confirmarRetorn = async () => {
