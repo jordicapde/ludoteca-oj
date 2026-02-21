@@ -47,7 +47,7 @@ import JocItem from '../lists/JocItem.vue'
 import BackButton from "../ui/BackButton.vue";
 import LoadingSpinner from '../ui/LoadingSpinner.vue'
 import SearchInput from '../ui/SearchInput.vue'
-import { useJocsStore } from '../../stores/jocsStore.js'
+import { useJocsStore } from '../../stores/JocsStore.js'
 
 const store = useJocsStore()
 

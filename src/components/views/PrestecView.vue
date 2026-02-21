@@ -105,7 +105,7 @@ import BackButton from "../ui/BackButton.vue";
 import LoadingSpinner from '../ui/LoadingSpinner.vue'
 import ActionModalButton from "../ui/ActionModalButton.vue";
 import SearchInput from '../ui/SearchInput.vue'
-import { useJocsStore } from '../../stores/jocsStore.js'
+import { useJocsStore } from '../../stores/JocsStore.js'
 
 const router = useRouter()
 const store = useJocsStore()

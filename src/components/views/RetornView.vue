@@ -125,7 +125,7 @@ import SearchInput from '../ui/SearchInput.vue'
 import ActionModalButton from '../ui/ActionModalButton.vue'
 import {actualitarPrestec} from '../../services/api.js'
 import {netejarText} from '../../js/utils.js'
-import { useJocsStore } from '../../stores/jocsStore.js'
+import { useJocsStore } from '../../stores/JocsStore.js'
 
 const store = useJocsStore()
 const router = useRouter()

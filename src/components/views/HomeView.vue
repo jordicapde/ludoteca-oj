@@ -49,7 +49,7 @@
 
 <script setup>
 import { onMounted, ref } from 'vue'
-import { useJocsStore } from '../../stores/jocsStore.js'
+import { useJocsStore } from '../../stores/JocsStore.js'
 import packageInfo from '../../../package.json'
 
 const store = useJocsStore()
