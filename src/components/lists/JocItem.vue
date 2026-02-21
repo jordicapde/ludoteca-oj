@@ -26,7 +26,7 @@
       <h3 class="text-sm font-bold text-gray-900 truncate tracking-tight">
         {{ joc.nom }}
       </h3>
-      <div class="mt-1">
+      <div v-if="joc.codi" class="mt-1">
         <span class="inline-block px-2 py-0.5 text-[10px] font-mono font-bold bg-primary-100 text-primary-700 rounded">
           {{ joc.codi }}
         </span>
