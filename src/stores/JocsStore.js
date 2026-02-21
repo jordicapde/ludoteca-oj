@@ -25,11 +25,30 @@ export const useJocsStore = defineStore("jocs", {
         return;
       }
 
-      this.carregant = true;
+      // 1. Buscar a localStorage per tenir dades immediates
+      if (this.ludoteca.length === 0) {
+        const jocsGuardats = localStorage.getItem('ludoteca_jocs');
+        const estatsGuardats = localStorage.getItem('ludoteca_estats');
+
+        if (jocsGuardats) this.ludoteca = JSON.parse(jocsGuardats);
+        if (estatsGuardats) this.estats = JSON.parse(estatsGuardats);
+
+        if (this.ludoteca.length > 0) {
+          this._assignarEstatsAJocs();
+          console.log("Dades carregades des de localStorage");
+
+          if (!forcarRefresc)
+            return;
+        }
+      }
+
+      // Invalidem atribut carregant per obtenir dades de manera silenciosa
+      // this.carregant = true;
       this.error = null;
 
+      // 2. Obtenir mentrestant la nova versió de les dades
       try {
-        console.log("Iniciant càrrega de dades...")
+        console.log("Iniciant sincronització de dades amb el servidor...")
         // Dispara les dues crides en paralel
         const [jocsData, estatsData] = await Promise.all([
           getJocs(),
@@ -39,6 +58,8 @@ export const useJocsStore = defineStore("jocs", {
         this.ludoteca = jocsData
         this.estats = estatsData
         console.log("Dades carregades correctament");
+        localStorage.setItem('ludoteca_jocs', JSON.stringify(jocsData));
+        localStorage.setItem('ludoteca_estats', JSON.stringify(estatsData));
 
         this._assignarEstatsAJocs();
         console.log("Estats assignats als jocs");
@@ -47,7 +68,7 @@ export const useJocsStore = defineStore("jocs", {
         console.error("Error a inicialitzarDades:", e);
         this.error = e.message || "S'ha produït un error al connectar amb el servidor.";
       } finally {
-        this.carregant = false;
+        // this.carregant = false;
       }
     },
 

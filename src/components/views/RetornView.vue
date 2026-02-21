@@ -66,7 +66,7 @@
         </div>
       </div>
 
-      <div class="flex-1 overflow-y-auto space-y-3 -mx-2 px-3 pb-4 pt-4 min-h-0">
+      <div class="flex-1 overflow-y-auto space-y-3 -mx-2 px-3 pb-4 pt-4 mb-3 mt-3 min-h-0">
         <JocItem
           v-for="prestec in prestecsDelSoci"
           :key="prestec.detall.idPrestec"
