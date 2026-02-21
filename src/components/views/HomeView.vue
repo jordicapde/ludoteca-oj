@@ -38,7 +38,7 @@
       />
 
       <p class="text-xs text-gray-400 font-medium tracking-wide text-opacity-80 mt-2">
-        Aquesta és una eina exclusiva per a socis i sòcies d'Osona Juga
+        Aquesta és una eina exclusiva<br> per a socis i sòcies d'Osona Juga
       </p>
       <p class="text-s text-gray-400 font-medium tracking-wide text-opacity-80 mt-1">
         Versió {{ appVersion }}

@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full max-w-lg mx-auto bg-white min-h-screen md:min-h-0 md:rounded-2xl md:shadow-xl p-6 flex flex-col relative">
+  <div class="w-full max-w-lg mx-auto bg-white min-h-[100dvh] md:min-h-0 md:rounded-2xl md:shadow-xl px-6 pb-6 pt-6 md:p-8 flex flex-col relative">
 
     <LoadingSpinner
       v-if="store.carregant"

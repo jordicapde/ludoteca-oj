@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full max-w-lg mx-auto bg-white min-h-screen md:min-h-0 md:rounded-2xl md:shadow-xl p-6 flex flex-col relative">
+  <div class="w-full max-w-lg mx-auto bg-white min-h-[100dvh] md:min-h-0 md:rounded-2xl md:shadow-xl px-6 pb-6 pt-6 md:p-8 flex flex-col relative">
 
     <LoadingSpinner
       v-if="store.carregant"
@@ -16,7 +16,8 @@
         v-model="nomSoci"
         type="text"
         placeholder="Qui s'emporta els jocs?"
-        class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 outline-none transition-all"
+        class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 outline-none transition-all scroll-mt-10"
+        @click="scrollToInput"
       >
     </div>
 
@@ -98,8 +99,8 @@
 <script setup>
 import {computed, onMounted, ref} from 'vue'
 import {useRouter} from 'vue-router'
-import {getJocs, postPrestec} from '../../services/api.js'
-import {netejarText} from '../../js/utils.js'
+import {postPrestec} from '../../services/api.js'
+import {netejarText, scrollToInput} from '../../js/utils.js'
 import JocItem from '../lists/JocItem.vue'
 import BackButton from "../ui/BackButton.vue";
 import LoadingSpinner from '../ui/LoadingSpinner.vue'

@@ -8,9 +8,10 @@
       <input
         :value="modelValue"
         @input="$emit('update:modelValue', $event.target.value)"
+        @click="scrollToInput"
         type="text"
         :placeholder="placeholder"
-        class="w-full px-4 py-3 pl-10 rounded-lg border border-gray-300 outline-none transition-all shadow-sm"
+        class="w-full px-4 py-3 pl-10 rounded-lg border border-gray-300 outline-none transition-all shadow-sm scroll-mt-10"
         :class="themeClasses"
         autocomplete="off"
       >
@@ -46,6 +47,7 @@
 
 <script setup>
 import { computed } from 'vue'
+import { scrollToInput } from "../../js/utils.js";
 
 const props = defineProps({
   modelValue: String,

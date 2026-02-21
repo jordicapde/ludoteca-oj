@@ -61,7 +61,7 @@ export const getEstats = async () => {
 export const postPrestec = async (nomSoci, idsJocs) => {
   return doPost({
     action: 'postPrestec',
-    nomSoci: nomSoci,
+    nomSoci: nomSoci.trim(),
     idsJocs: idsJocs
   });
 };

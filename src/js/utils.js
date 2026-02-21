@@ -6,3 +6,13 @@ export const netejarText = (text) => {
     .toLowerCase()
     .trim()
 }
+
+export const scrollToInput = (event) => {
+  // Esperar perquè el teclat virtual tingui temps d'obrir-se
+  setTimeout(() => {
+    event.target.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    });
+  }, 300);
+}
