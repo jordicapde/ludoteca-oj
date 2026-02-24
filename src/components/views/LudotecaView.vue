@@ -10,6 +10,7 @@
       <h2 class="ml-auto text-xl font-bold text-gray-800">Consultar la ludoteca</h2>
     </div>
 
+    <!-- Quadre de cerca -->
     <SearchInput
       v-model="textCerca"
       placeholder="Busca per nom o codi..."
@@ -17,6 +18,13 @@
       :show-no-results="false"
     />
 
+    <!-- Filtres avançats -->
+    <FiltresAvancatsComponent
+      v-model:filtresEstat="filtresEstat"
+      v-model:ordenacio="ordenacio"
+    />
+
+    <!-- Llista de jocs -->
     <div class="flex-1 overflow-y-auto -mx-2 px-2">
       <div v-if="!store.carregant && jocsFiltrats.length === 0" class="text-center py-12">
         <p class="text-gray-400">No s'han trobat jocs amb aquest nom.</p>
@@ -52,12 +60,18 @@ import JocDetallPrestecComponent from '../lists/JocDetallPrestecComponent.vue'
 import BackButton from "../ui/BackButton.vue";
 import LoadingSpinner from '../ui/LoadingSpinner.vue'
 import SearchInput from '../ui/SearchInput.vue'
+import FiltresAvancatsComponent from '../ui/FiltresAvancatsComponent.vue'
 import { useJocsStore } from '../../stores/JocsStore.js'
 
 const store = useJocsStore()
 
 // Estat
 const textCerca = ref('')
+const filtresEstat = ref({
+  disponible: true,
+  prestec: true
+})
+const ordenacio = ref('nom')
 
 // Càrrega inicial
 onMounted(async () => {
@@ -65,12 +79,35 @@ onMounted(async () => {
 })
 
 const jocsFiltrats = computed(() => {
-  if (!textCerca.value) return store.ludoteca
+  let resultat = store.ludoteca
 
-  const textCercaNet = netejarText(textCerca.value)
-  return store.ludoteca.filter(joc => {
-    return netejarText(joc.nom).includes(textCercaNet) ||
-           netejarText(joc.codi).includes(textCercaNet)
+  // 1. Filtre de text (Cerca)
+  if (textCerca.value) {
+    const textCercaNet = netejarText(textCerca.value)
+    resultat = resultat.filter(joc => {
+      return netejarText(joc.nom).includes(textCercaNet) ||
+             netejarText(joc.codi).includes(textCercaNet)
+    })
+  }
+
+  // 2. Filtre d'estats
+  resultat = resultat.filter(joc => {
+    if (filtresEstat.value.disponible && joc.estaDisponible) return true
+
+    if (filtresEstat.value.prestec && joc.estaEnPrestec) return true
+
+    return false
+  })
+
+  // 3. Ordenació
+  return [...resultat].sort((a, b) => {
+    if (ordenacio.value === 'nom') {
+      // Ordenació alfabètica per nom
+      return String(a.nom).localeCompare(String(b.nom), 'ca')
+    } else {
+      // Ordenació per codi (numeric: true fa que el codi A2 vagi abans que A10)
+      return String(a.codi).localeCompare(String(b.codi), 'ca', { numeric: true })
+    }
   })
 })
 </script>
