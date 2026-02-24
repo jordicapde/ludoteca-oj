@@ -10,7 +10,7 @@ export class Joc {
     this.metadata = null;
   }
 
-  get esPotPrestar() {
+  get estaDisponible() {
     return this.estat === ESTAT_JOC.DISPONIBLE;
   }
 

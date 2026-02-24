@@ -35,7 +35,7 @@
 
     <!-- Part dreta (estat, detalls o accions) -->
     <div class="flex items-center space-x-3 ml-auto pr-2">
-      <div class="flex flex-col items-end gap-1">
+      <div class="flex flex-col items-end gap-2">
         <div v-if="mostrarEstat"
              :class="colorEstat"
              class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border whitespace-nowrap">

@@ -30,17 +30,20 @@
       :results="resultatsFiltrats"
     >
       <template #item="{ item }">
-        <JocItem
+        <JocComponent
           :joc="item"
-          :mostrar-estat="!item.esPotPrestar"
-          @click="item.esPotPrestar ? afegirJoc(item) : null"
-          :class="!item.esPotPrestar ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'"
+          :mostrar-estat="!item.estaDisponible"
+          @click="item.estaDisponible ? afegirJoc(item) : null"
+          :class="!item.estaDisponible ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'"
           :flat="true"
         >
-          <template #action v-if="item.esPotPrestar">
+          <template #action v-if="item.estaDisponible">
             <span class="text-blue-600 text-sm font-medium whitespace-nowrap">+ Afegir</span>
           </template>
-        </JocItem>
+          <template #details v-if="item.estaEnPrestec">
+            <JocDetallPrestecComponent :prestec="item.detall" />
+          </template>
+        </JocComponent>
       </template>
 
       <template #no-results>
@@ -59,7 +62,7 @@
       </div>
 
       <div v-else class="space-y-3">
-        <JocItem
+        <JocComponent
           v-for="(joc, index) in jocsSeleccionats"
           :key="index"
           :joc="joc"
@@ -75,7 +78,7 @@
               </svg>
             </button>
           </template>
-        </JocItem>
+        </JocComponent>
       </div>
     </div>
 
@@ -101,7 +104,8 @@ import {computed, onMounted, ref} from 'vue'
 import {useRouter} from 'vue-router'
 import {postPrestec} from '../../services/api.js'
 import {netejarText, scrollToInput} from '../../js/utils.js'
-import JocItem from '../lists/JocItem.vue'
+import JocComponent from '../lists/JocComponent.vue'
+import JocDetallPrestecComponent from '../lists/JocDetallPrestecComponent.vue'
 import BackButton from "../ui/BackButton.vue";
 import LoadingSpinner from '../ui/LoadingSpinner.vue'
 import ActionModalButton from "../ui/ActionModalButton.vue";

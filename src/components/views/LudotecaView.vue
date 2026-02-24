@@ -23,13 +23,17 @@
       </div>
 
       <div v-else class="space-y-2">
-        <JocItem
+        <JocComponent
           v-for="joc in jocsFiltrats"
           :key="joc.id"
           :joc="joc"
           :mostrar-estat="true"
           :hover="false"
-        />
+        >
+          <template #details v-if="joc.estaEnPrestec">
+            <JocDetallPrestecComponent :prestec="joc.detall" />
+          </template>
+        </JocComponent>
       </div>
     </div>
 
@@ -43,7 +47,8 @@
 <script setup>
 import {computed, onMounted, ref} from 'vue'
 import {netejarText} from '../../js/utils.js'
-import JocItem from '../lists/JocItem.vue'
+import JocComponent from '../lists/JocComponent.vue'
+import JocDetallPrestecComponent from '../lists/JocDetallPrestecComponent.vue'
 import BackButton from "../ui/BackButton.vue";
 import LoadingSpinner from '../ui/LoadingSpinner.vue'
 import SearchInput from '../ui/SearchInput.vue'

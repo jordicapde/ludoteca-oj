@@ -67,7 +67,7 @@
       </div>
 
       <div class="flex-1 overflow-y-auto space-y-3 -mx-2 px-3 pb-4 pt-4 mb-3 mt-3 min-h-0">
-        <JocItem
+        <JocComponent
           v-for="prestec in prestecsDelSoci"
           :key="prestec.detall.idPrestec"
           :joc="prestec"
@@ -76,11 +76,7 @@
           :seleccionat="estaSeleccionat(prestec.detall.idPrestec)"
         >
           <template #details>
-            <div class="text-xs text-gray-500">
-              <span :class="prestec.detall.diesDePrestec > 15 ? 'text-red-500 font-bold' : ''">
-                Fa {{ prestec.detall.diesDePrestec }} dies
-              </span>
-            </div>
+            <JocDetallPrestecComponent :prestec="prestec.detall" :mostrar-nom="false" />
           </template>
 
           <template #action>
@@ -93,7 +89,7 @@
               </svg>
             </div>
           </template>
-        </JocItem>
+        </JocComponent>
       </div>
 
       <div class="mt-auto flex-none">
@@ -120,7 +116,8 @@ import {computed, onMounted, ref} from 'vue'
 import {useRouter} from 'vue-router'
 import BackButton from '../ui/BackButton.vue'
 import LoadingSpinner from '../ui/LoadingSpinner.vue'
-import JocItem from '../lists/JocItem.vue'
+import JocComponent from '../lists/JocComponent.vue'
+import JocDetallPrestecComponent from '../lists/JocDetallPrestecComponent.vue'
 import SearchInput from '../ui/SearchInput.vue'
 import ActionModalButton from '../ui/ActionModalButton.vue'
 import {actualitarPrestec} from '../../services/api.js'
