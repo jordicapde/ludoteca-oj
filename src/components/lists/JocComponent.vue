@@ -39,7 +39,7 @@
         <div v-if="mostrarEstat"
              :class="colorEstat"
              class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border whitespace-nowrap">
-          {{ joc.estat }}
+          {{ joc.estatToString }}
         </div>
 
         <slot name="details"></slot>

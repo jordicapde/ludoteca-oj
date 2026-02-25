@@ -26,8 +26,8 @@
 
     <!-- Llista de jocs -->
     <div class="flex-1 overflow-y-auto -mx-2 px-2">
-      <div v-if="!store.carregant && jocsFiltrats.length === 0" class="text-center py-12">
-        <p class="text-gray-400">No s'han trobat jocs amb aquest nom.</p>
+      <div v-if="!store.carregant && jocsFiltrats.length === 0" class="text-center py-8 bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
+        <p class="text-gray-400">No s'han trobat jocs</p>
       </div>
 
       <div v-else class="space-y-2">

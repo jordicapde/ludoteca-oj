@@ -1,5 +1,7 @@
 import { defineStore } from "pinia"
 import {getEstats, getJocs} from "../services/api.js";
+import {crearJoc} from "../models/Joc.js";
+import {crearDetallEstat} from "../models/DetallEstat.js";
 
 export const useJocsStore = defineStore("jocs", {
   state: () => ({
@@ -30,8 +32,21 @@ export const useJocsStore = defineStore("jocs", {
         const jocsGuardats = localStorage.getItem('ludoteca_jocs');
         const estatsGuardats = localStorage.getItem('ludoteca_estats');
 
-        if (jocsGuardats) this.ludoteca = JSON.parse(jocsGuardats);
-        if (estatsGuardats) this.estats = JSON.parse(estatsGuardats);
+        if (jocsGuardats) {
+          // S'ha de reconstruir els objectes del localStorage
+          const jocsReconstruits = JSON.parse(jocsGuardats).map(jocPla => {
+            return crearJoc(jocPla);
+          });
+
+          this.ludoteca.splice(0, this.ludoteca.length, ...jocsReconstruits);
+        }
+        if (estatsGuardats) {
+          const estatsReconstruits = JSON.parse(estatsGuardats).map(estatPla => {
+            return crearDetallEstat(estatPla);
+          });
+
+          this.estats.splice(0, this.estats.length, ...estatsReconstruits);
+        }
 
         if (this.ludoteca.length > 0) {
           this._assignarEstatsAJocs();

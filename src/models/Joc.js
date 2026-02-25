@@ -17,11 +17,21 @@ export class Joc {
   get estaEnPrestec() {
     return this.estat === ESTAT_JOC.PRESTEC;
   }
+
+  get estatToString() {
+    switch (this.estat) {
+      case ESTAT_JOC.PRESTEC:
+        return 'En préstec';
+      case ESTAT_JOC.DISPONIBLE:
+      default:
+        return 'Disponible';
+    }
+  }
 }
 
 export const ESTAT_JOC = Object.freeze({
-  DISPONIBLE: 'Disponible',
-  PRESTEC: 'En préstec',
+  DISPONIBLE: 'DISPONIBLE',
+  PRESTEC: 'PRESTEC',
 });
 
 export const crearJoc = (dades) => new Joc(dades);
